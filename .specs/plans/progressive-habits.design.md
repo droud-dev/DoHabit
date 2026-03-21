@@ -21,7 +21,8 @@ Extend DoHabit to support progressive habits - habits that advance through defin
   title: "Read daily",
   colorIndex: 0,
   iconTitle: "book",
-  frequency: 1,  // keeps working for non-progressive habits
+  frequency: 1,  // Global completion requirement, independent of stages
+                 // Defines HOW OFTEN (e.g., 1x per day), not WHAT (defined by stages)
   completedDays: [...],
   creationDate: "...",
 
@@ -84,6 +85,66 @@ completedDays: [
 - Default invalid `currentStageId` to first stage (or null)
 - Equality checks filter out invalid stageIds
 
+## Dependency Analysis & Considerations
+
+### Verified Compatibility
+
+**Export/Import (exportAllData.js, importAllData.js)**
+- ✅ Dumps entire localStorage as JSON
+- New fields export/import automatically
+- No changes needed
+
+**Achievements (achievementsReducer.js)**
+- ✅ Only accesses existing fields: `completedDays`, `frequency`, `creationDate`, `isArchived`, `diary`
+- Achievement logic based on streaks, completions, dates
+- Unaffected by stages
+
+**Existing Utilities**
+- ✅ All utilities only access `date`, `progress`, `isCompYdayBtnUsed` from completedDays
+- Optional `stageId` field won't break anything
+- `updateCompletedDays.js` preserves `stageId` via spread operator (no changes needed)
+
+**Components**
+- ✅ Iterate through habits accessing standard fields
+- New optional fields backwards compatible
+
+### Implementation Requirements
+
+**1. HabitEditor Form Submission**
+- Handle stages data in form submission (habitsReducer.js)
+- When creating/editing habit, include stages fields from form
+- Form data structure: `{stages, currentStageId, progressionMode, progressionThreshold}`
+
+**2. Initial Values for New Progressive Habits**
+- `currentStageId` must default to first stage in order when creating progressive habit
+- Add logic in `habitsReducer` `'addHabit'` action
+- Sort stages by `order`, pick lowest
+
+**3. Stage Deletion Edge Case**
+- When user deletes stages via `'updateStages'` action, check if `currentStageId` still exists
+- If deleted, reassign to first available stage in order
+- If no stages remain, set `currentStageId` to null and clear stages object
+
+**4. Frequency Field Interaction**
+- Top-level `frequency` remains editable for progressive habits
+- Frequency defines HOW OFTEN (1x per day, future: 2x per month)
+- Stages define WHAT to do (read 1 page vs 2 pages)
+- These are orthogonal concerns - no special handling in FrequencyBlock needed
+- Future-proof for "2x per month" frequency feature
+
+**5. Stage Display Location**
+- Current stage shown in HabitHeader.jsx (lines 75-85)
+- Located where "Streak: X, Notes: Y" displays
+- Format: `Stage: {description} Streak: {streak} Notes: {count}`
+
+### Edge Cases Handled
+
+- **Invalid stageId in completedDays**: Filtered by equality check `d.stageId === currentStageId`
+- **Stage deleted after completions assigned**: "No stage" column in statistics
+- **currentStageId references deleted stage**: Validation on `'updateStages'` action
+- **Empty stages object**: Check `if (habit.stages)` before accessing
+- **Frequency change on progressive habit**: Preserves stageId, updates progress values
+
 ## Core Logic & Functions
 
 ### New Utilities
@@ -139,6 +200,9 @@ completedDays: [
   - `'progressStageNext'` - manually advance to next stage
   - `'progressStagePrevious'` - manually go back to previous stage
   - `'updateStages'` - save edited stages from HabitEditor
+- Modify existing actions:
+  - `'addHabit'` - set `currentStageId` to first stage when `stages` present
+  - `'editHabit'` - validate and reassign `currentStageId` if stage deleted
 
 ## UI Changes
 
@@ -207,10 +271,14 @@ Add chart after "Total Completed": **"Completed per Stage"**
 5. `src/components/Habit/HabitMenu.jsx` - Add Next/Previous Stage menu items
 6. `src/components/Statistics/Statistics.jsx` - Add "Completed per Stage" chart
 
-## Open Questions / Decisions Made
+## Decisions Made
 
 - ✅ Stage reassignment for old completions: SKIPPED (too complex, no good UX pattern)
 - ✅ Stage conflict resolution: Use natural JavaScript object iteration order (no special handling)
 - ✅ Stage reordering: Use `order` field instead of linked list `nextStage` pointers
 - ✅ Manual mode threshold: Optional - if `threshold > 0`, disable "Next Stage" until met
 - ✅ History preservation: Store `stageId` in each completedDay entry
+- ✅ Frequency field: Remains editable for progressive habits (orthogonal to stages)
+  - Frequency = HOW OFTEN (1x per day, future: 2x per month)
+  - Stages = WHAT to do (read 1 page, read 2 pages)
+  - Future-proof for "2x per month" frequency feature
