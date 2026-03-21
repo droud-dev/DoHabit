@@ -375,6 +375,59 @@ export default isWithinPeriod;
 **`src/css/FrequencyBlock.module.css`:**
 - Add `.separator` style for "/" divider
 
+**`src/utils/getCompletionCountPerDay.js`:**
+- Change completion check from `day.progress < frequency` to `day.progress > 0`
+- Counts any day with activity, not just days meeting frequency threshold
+- Simpler logic, more intuitive for statistics with variable periods
+
+**`src/utils/getCompletionCountPerMonth.js`:**
+- Same change as getCompletionCountPerDay
+- Count any day where user performed the habit
+
+**`src/utils/editHabit.js`:**
+- Check both frequency AND periodDays for changes
+- `const frequencyWasChanged = habit.frequency !== updatedHabit.frequency || habit.periodDays !== updatedHabit.periodDays`
+
+**`src/utils/updateCompletedDays.js`:**
+- Update logic to preserve historical data
+- Only update today's entry if progress < newFrequency
+- Leave all past entries unchanged (historical data loses meaning when period changes)
+- New behavior: only affects current day, preserves accurate historical records
+
+**`src/utils/getCompletionGaps.js`:**
+- Add `periodDays` parameter
+- Pass to any completion checking functions
+
+**`src/utils/achievementsReducer.js`:**
+- Add `h.periodDays || 1` to all function calls:
+  - getStreaks (lines 50, 126, 170, 193)
+  - getCompletionGaps (lines 59, 68)
+  - checkHabitCompletion (line 99)
+  - removeIncompleteFirstDay (lines 153, 231, 259, 293)
+
+**`src/components/HabitEditor/HabitEditor.jsx`:**
+- Pass `currentPeriodDays={habit?.periodDays}` to FrequencyBlock
+
+**`src/components/Habit/Calendar.jsx`:**
+- Already passes all props to Month via `{...props}`
+- No changes needed if Habit.jsx passes periodDays
+
+**`src/components/Habit/Month.jsx`:**
+- Add `periodDays` parameter to component
+- Pass to checkHabitCompletion: `checkHabitCompletion(completedDays, frequency, periodDays, ...dates)`
+
+**`src/components/Habit/CompactCalendar.jsx`:**
+- Add `periodDays` parameter to component
+- Pass to checkHabitCompletion: `checkHabitCompletion(completedDays, frequency, periodDays, ...dates)`
+
+**`src/components/Habit/HabitMenu.jsx`:**
+- Add `periodDays` to Statistics link state (line 101)
+- `periodDays,` in state object
+
+**`src/components/Statistics/Statistics.jsx`:**
+- Extract `periodDays` from location.state
+- Pass to both getStreaks calls (lines 49-50)
+
 ## Testing Scenarios
 
 ### Migration
@@ -409,6 +462,19 @@ export default isWithinPeriod;
 - [ ] Period spans month boundaries
 - [ ] Very long periods (30, 60, 90 days)
 - [ ] Export/import preserves `periodDays`
+
+### Statistics & Achievements
+- [ ] Weekday chart counts days with activity
+- [ ] Monthly chart counts days with activity
+- [ ] All 26 achievements work with periodDays > 1
+- [ ] Statistics view receives and uses periodDays
+- [ ] Calendar highlights correct completed days
+
+### Editing Habits
+- [ ] Changing frequency triggers update
+- [ ] Changing periodDays triggers update
+- [ ] Changing both works correctly
+- [ ] FrequencyBlock shows current values when editing
 
 ## Future Enhancements
 
