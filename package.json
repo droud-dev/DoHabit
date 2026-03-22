@@ -2,7 +2,7 @@
 	"name": "dohabit",
 	"description": "DoHabit is a straightforward habit tracker that doesn’t require registration. Easily mark your completed days, track your progress, and keep a journal for each habit.",
 	"version": "0.20.3",
-	"homepage": "https://inikann.github.io/DoHabit/",
+	"homepage": "/",
 	"private": true,
 	"dependencies": {
 		"chart.js": "^4.4.3",
@@ -34,6 +34,7 @@
 		"deploy": "gh-pages -b gh-pages -d build",
 		"start": "react-scripts start",
 		"build": "react-scripts build",
+		"test": "react-scripts test",
 		"eject": "react-scripts eject"
 	},
 	"eslintConfig": {
@@ -52,5 +53,9 @@
 			"last 1 firefox version",
 			"last 1 safari version"
 		]
+	},
+	"devDependencies": {
+		"@testing-library/jest-dom": "^6.9.1",
+		"@testing-library/react": "^16.3.2"
 	}
 }

@@ -1,0 +1,127 @@
+/* header */
+.header {
+	margin-bottom: 0.6rem;
+}
+
+/* toggle row */
+.toggleRow {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+}
+
+.toggleRow label {
+	cursor: pointer;
+	user-select: none;
+}
+
+/* content */
+.content {
+	display: flex;
+	flex-direction: column;
+	gap: 0.6rem;
+	margin-top: 0.6rem;
+}
+
+/* stage row */
+.stageRow {
+	display: flex;
+	gap: 0.4rem;
+	align-items: center;
+}
+
+.stageLabel {
+	flex-shrink: 0;
+	min-width: 1.6rem;
+	text-align: center;
+	color: gray;
+	font-size: 0.85rem;
+}
+
+.stageInput {
+	flex: 1;
+	height: var(--input-height-primary);
+	border-radius: var(--border-radius-secondary);
+	padding: 0 0.6rem;
+}
+
+/* buttons */
+.btn {
+	background-color: var(--bg-color-primary);
+	border-radius: var(--border-radius-secondary);
+}
+
+.btn:disabled {
+	color: gray;
+}
+
+.removeBtn {
+	height: var(--input-height-primary);
+	padding: 0 0.6rem;
+	background-color: var(--bg-color-primary);
+	border-radius: var(--border-radius-secondary);
+	flex-shrink: 0;
+}
+
+.removeBtn:disabled {
+	color: gray;
+}
+
+.addBtn {
+	width: 100%;
+	height: var(--input-height-primary);
+	background-color: var(--bg-color-primary);
+	border-radius: var(--border-radius-secondary);
+}
+
+/* mode section */
+.modeSection {
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+	margin-top: 0.4rem;
+}
+
+.modeLabel {
+	font-size: 0.9rem;
+	color: gray;
+}
+
+.modeRow {
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+}
+
+.modeRow label {
+	display: flex;
+	align-items: center;
+	gap: 0.3rem;
+	cursor: pointer;
+	user-select: none;
+}
+
+/* interval */
+.intervalRow {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	margin-top: 0.2rem;
+}
+
+.intervalInput {
+	width: 4rem;
+	height: var(--input-height-primary);
+	border-radius: var(--border-radius-secondary);
+	text-align: center;
+}
+
+.intervalLabel {
+	font-size: 0.9rem;
+}
+
+/* error */
+.error {
+	color: IndianRed;
+	font-size: 0.85rem;
+}

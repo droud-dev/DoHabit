@@ -48,6 +48,12 @@
 	gap: 0.4rem;
 }
 
+/* error */
+.error {
+	color: IndianRed;
+	font-size: 0.85rem;
+}
+
 /* info */
 .info {
 	/* padding-bottom: 5rem; */

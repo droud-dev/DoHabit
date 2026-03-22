@@ -19,6 +19,7 @@ import { FaShareAltSquare } from 'react-icons/fa';
 import { FaCalendarCheck } from 'react-icons/fa';
 import { FaCalendarTimes } from 'react-icons/fa';
 import { FaChartSimple } from 'react-icons/fa6';
+import { IoIosArrowForward } from 'react-icons/io'; // next stage
 
 // --- Variants:START ---
 const bgVariants = {
@@ -40,7 +41,8 @@ function HabitMenu(props) {
 	const {
 		title, completedDays, colorIndex, colorPalette,
 		isTodayCompleted, isYesterdayCompleted, todayProgress, frequency, currentStreak,
-		onShowMenu, onShare
+		onShowMenu, onShare,
+		isProgressive, progressionMode, currentStage, stages,
 	} = props;
 
 	const habitsDispatch = useHabitsStore((s) => s.habitsDispatch);
@@ -63,6 +65,17 @@ function HabitMenu(props) {
 			frequency
 		});
 	};
+
+	const handleNextStage = () => {
+		habitsDispatch({
+			type: 'progressStage',
+			habitTitle: title,
+		});
+	};
+
+	const showNextStageButton = isProgressive
+		&& progressionMode === 'manual'
+		&& currentStage < stages.length - 1;
 
 	const buttons = [[
 		isYesterdayCompleted ? <FaCalendarTimes /> : <FaCalendarCheck />,
@@ -116,7 +129,16 @@ function HabitMenu(props) {
 		},
 		null,
 		true
-	]].map(
+	],
+	...(showNextStageButton ? [[
+		<IoIosArrowForward />,
+		'Next Stage',
+		darkenedColor,
+		null,
+		null,
+		() => handleNextStage()
+	]] : [])
+	].map(
 		([icon, text, bgColor, to, state, onClick, arrow]) => (
 			<li key={text}>
 				<Link to={to ? (process.env.PUBLIC_URL + to) : null} state={state}>

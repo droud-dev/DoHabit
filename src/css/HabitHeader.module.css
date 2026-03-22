@@ -84,6 +84,12 @@
 	color: gray;
 }
 
+/* stageDescription */
+.stageDescription {
+	color: gray;
+	font-style: italic;
+}
+
 /* restoreIcon */
 .restoreIcon {
 	width: 1.4rem;

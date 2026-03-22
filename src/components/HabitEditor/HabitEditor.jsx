@@ -15,6 +15,7 @@ import FrequencyBlock from './FrequencyBlock';
 import OrderBlock from './OrderBlock';
 import ColorBlock from './ColorBlock';
 import IconBlock from './IconBlock';
+import ProgressiveBlock from './ProgressiveBlock';
 import Button from '../Button';
 
 // utils
@@ -40,6 +41,7 @@ function HabitEditor() {
 
 	const [inputTitle, setInputTitle] = useState(isEditMode ? habit?.title : '');
 	const [alreadyExist, setAlreadyExist] = useState(false);
+	const [progressiveError, setProgressiveError] = useState('');
 
 	// check for existing habit with the same title
 	useEffect(() => {
@@ -56,6 +58,19 @@ function HabitEditor() {
 	// on submit form
 	const handleSabmitForm = (e) => {
 		e.preventDefault();
+
+		// Progressive validation: must have at least 2 stages when enabled
+		const formData = e.target;
+		const isProgressiveEnabled = formData.isProgressive?.value === 'true';
+		if (isProgressiveEnabled) {
+			const stagesValue = JSON.parse(formData.stages?.value || '[]');
+			const nonEmptyStages = stagesValue.filter((s) => s.trim().length > 0);
+			if (nonEmptyStages.length < 2) {
+				setProgressiveError('Progressive habits require at least 2 stages with descriptions.');
+				return;
+			};
+		};
+		setProgressiveError('');
 
 		inputTitle.length
 			? handleUpdate({ ...actionObj, data: e.target, type: isEditMode ? 'editHabit' : 'addHabit' })
@@ -96,6 +111,16 @@ function HabitEditor() {
 				<FrequencyBlock
 					{...{ currentFrequency: habit?.frequency }}
 				/>
+
+				<ProgressiveBlock
+					currentSettings={isEditMode ? habit : null}
+				/>
+
+				{progressiveError && (
+					<small className={styles.error}>
+						{progressiveError}
+					</small>
+				)}
 
 				{isEditMode && (
 					<OrderBlock

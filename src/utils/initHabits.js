@@ -17,6 +17,17 @@ function initHabits() {
 				newH.completedDays = removeIncompleteDays(newH.completedDays, newH.frequency);
 			};
 
+			// add default progressive fields for backward compatibility
+			if (newH.isProgressive === undefined) {
+				newH.isProgressive = false;
+				newH.stages = [];
+				newH.currentStage = 0;
+				newH.progressionMode = 'manual';
+				newH.progressionInterval = 7;
+				newH.completionsSinceStageStart = 0;
+				newH.stageAdvancementDate = null;
+			}
+
 			return newH;
 		}
 	);

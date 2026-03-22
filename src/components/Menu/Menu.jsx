@@ -58,7 +58,7 @@ function Menu() {
 					iconColor="#7fc7ff"
 					title="GitHub Repository"
 					desc="View or contribute to the project"
-					onClick={() => window.open('https://github.com/iNikAnn/DoHabit', '_blank')}
+					onClick={() => window.open('https://github.com/droud-dev/DoHabit', '_blank')}
 					link
 				/>
 
@@ -67,7 +67,7 @@ function Menu() {
 					iconColor="#ffb841"
 					title="Send Feedback"
 					desc="Share your thoughts or report an issue"
-					onClick={() => window.location.href = 'mailto:ilowen@ya.ru?subject=Feedback%20on%20DoHabit'}
+					onClick={() => window.location.href = 'mailto:dev@droud.one?subject=Feedback%20on%20DoHabit'}
 					link
 				/>
 			</MenuItemList>

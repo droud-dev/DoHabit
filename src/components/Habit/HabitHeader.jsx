@@ -18,6 +18,7 @@ function HabitHeader(props) {
 		title, icon, frequency, diary, colorPalette,
 		isTodayCompleted, todayProgress, currentStreak,
 		isArchive,
+		isProgressive, stages, currentStage,
 	} = props;
 
 	const habitsDispatch = useHabitsStore((s) => s.habitsDispatch);
@@ -82,7 +83,19 @@ function HabitHeader(props) {
 							Notes: <strong>{diary.length}</strong>
 						</small>
 					)}
+
+					{isProgressive && stages?.length > 0 && (
+						<small role="status" aria-live="polite">
+							Stage {currentStage + 1} of {stages.length}
+						</small>
+					)}
 				</div>
+
+				{isProgressive && stages?.length > 0 && (
+					<div className={styles.stageDescription}>
+						<small>{stages[currentStage]}</small>
+					</div>
+				)}
 			</div>
 
 			{!isArchive && (
