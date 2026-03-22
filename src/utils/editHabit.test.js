@@ -1,6 +1,14 @@
 import editHabit from './editHabit';
+import getFormattedDate from './getFormattedDate';
+
+// Mock getFormattedDate so updateCompletedDays (called by editHabit) knows "today"
+jest.mock('./getFormattedDate');
 
 describe('editHabit', () => {
+	beforeEach(() => {
+		getFormattedDate.mockReturnValue('2026-03-22');
+	});
+
 	const makeHabit = (overrides = {}) => ({
 		title: 'Test Habit',
 		frequency: 1,
@@ -230,6 +238,76 @@ describe('editHabit', () => {
 			const result = editHabit(habits, 'Read', updated, 0);
 
 			expect(result[0].completionsSinceStageStart).toBe(6); // counter preserved
+		});
+	});
+
+	describe('periodDays change detection', () => {
+		it('should trigger updateCompletedDays when periodDays changes', () => {
+			const habits = [makeHabit({
+				title: 'Meditate',
+				frequency: 2,
+				periodDays: 1,
+				completedDays: [
+					{ date: '2026-03-20', progress: 2 },
+					{ date: '2026-03-21', progress: 2 },
+					{ date: '2026-03-22', progress: 2 },
+				],
+			})];
+
+			const updated = { title: 'Meditate', frequency: 2, periodDays: 7 };
+
+			const result = editHabit(habits, 'Meditate', updated, 0);
+
+			// Past entries should remain unchanged (updateCompletedDays only modifies today)
+			expect(result[0].completedDays[0]).toEqual({ date: '2026-03-20', progress: 2 });
+			expect(result[0].completedDays[1]).toEqual({ date: '2026-03-21', progress: 2 });
+			// periodDays should be updated
+			expect(result[0].periodDays).toBe(7);
+		});
+
+		it('should trigger updateCompletedDays when both frequency AND periodDays change', () => {
+			const habits = [makeHabit({
+				title: 'Run',
+				frequency: 1,
+				periodDays: 1,
+				completedDays: [
+					{ date: '2026-03-19', progress: 1 },
+					{ date: '2026-03-20', progress: 1 },
+					{ date: '2026-03-22', progress: 1 },
+				],
+			})];
+
+			const updated = { title: 'Run', frequency: 3, periodDays: 7 };
+
+			const result = editHabit(habits, 'Run', updated, 0);
+
+			// Past entries unchanged
+			expect(result[0].completedDays[0]).toEqual({ date: '2026-03-19', progress: 1 });
+			expect(result[0].completedDays[1]).toEqual({ date: '2026-03-20', progress: 1 });
+			// Today's entry should be updated to new frequency
+			expect(result[0].completedDays[2]).toEqual({ date: '2026-03-22', progress: 3 });
+			// Both fields updated
+			expect(result[0].frequency).toBe(3);
+			expect(result[0].periodDays).toBe(7);
+		});
+
+		it('should NOT trigger updateCompletedDays when periodDays is unchanged', () => {
+			const habits = [makeHabit({
+				title: 'Read',
+				frequency: 2,
+				periodDays: 7,
+				completedDays: [
+					{ date: '2026-03-22', progress: 2 },
+				],
+			})];
+
+			const updated = { title: 'Read Books', frequency: 2, periodDays: 7 };
+
+			const result = editHabit(habits, 'Read', updated, 0);
+
+			// completedDays should be untouched (no frequency/period change)
+			expect(result[0].completedDays[0]).toEqual({ date: '2026-03-22', progress: 2 });
+			expect(result[0].title).toBe('Read Books');
 		});
 	});
 

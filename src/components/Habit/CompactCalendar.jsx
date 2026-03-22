@@ -6,7 +6,7 @@ import { useSettingsStore } from '../../stores/settingsStore';
 // utils
 import checkHabitCompletion from '../../utils/checkHabitCompletion';
 
-function CompactCalendar({ colorPalette, completedDays, frequency }) {
+function CompactCalendar({ colorPalette, completedDays, frequency, periodDays }) {
 
 	const settings = useSettingsStore((s) => s.settings);
 	const highlightToday = settings.calendarHighlightToday ?? true;
@@ -20,7 +20,7 @@ function CompactCalendar({ colorPalette, completedDays, frequency }) {
 		(_, i) => new Date(Date.now() - i * 24 * 60 * 60 * 1000)
 	);
 
-	const checkedDates = checkHabitCompletion(completedDays, frequency, ...dates);
+	const checkedDates = checkHabitCompletion(completedDays, frequency, periodDays, ...dates);
 
 	const weeks = checkedDates
 		.reduce(

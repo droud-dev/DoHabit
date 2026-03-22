@@ -168,4 +168,73 @@ describe('habitsReducer', () => {
 			expect(habit.completedDays).toEqual([]);
 		});
 	});
+
+	describe('addHabit action with periodDays', () => {
+		it('should include periodDays from form data', () => {
+			const data = {
+				title: { value: 'Weekly Habit' },
+				colorIndex: { value: '0' },
+				iconTitle: { value: 'star' },
+				frequency: { value: '2' },
+				periodDays: { value: '7' },
+			};
+			const result = habitsReducer([], {
+				type: 'addHabit',
+				data,
+			});
+
+			expect(result[0].periodDays).toBe(7);
+			expect(result[0].frequency).toBe(2);
+		});
+
+		it('should default periodDays to 1 when not provided in form data', () => {
+			const data = {
+				title: { value: 'Daily Habit' },
+				colorIndex: { value: '0' },
+				iconTitle: { value: 'star' },
+				frequency: { value: '1' },
+			};
+			const result = habitsReducer([], {
+				type: 'addHabit',
+				data,
+			});
+
+			expect(result[0].periodDays).toBe(1);
+		});
+
+		it('should handle periodDays with value "0" by defaulting to 1', () => {
+			const data = {
+				title: { value: 'Habit' },
+				colorIndex: { value: '0' },
+				iconTitle: { value: 'star' },
+				frequency: { value: '1' },
+				periodDays: { value: '0' },
+			};
+			const result = habitsReducer([], {
+				type: 'addHabit',
+				data,
+			});
+
+			expect(result[0].periodDays).toBe(1);
+		});
+
+		it('should place periodDays between frequency and completedDays in habit object', () => {
+			const data = {
+				title: { value: 'Test' },
+				colorIndex: { value: '0' },
+				iconTitle: { value: 'star' },
+				frequency: { value: '3' },
+				periodDays: { value: '14' },
+			};
+			const result = habitsReducer([], {
+				type: 'addHabit',
+				data,
+			});
+
+			const habit = result[0];
+			expect(habit.frequency).toBe(3);
+			expect(habit.periodDays).toBe(14);
+			expect(habit.completedDays).toEqual([]);
+		});
+	});
 });

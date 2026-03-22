@@ -47,7 +47,7 @@ function achievementsReducer(achievements, actions) {
 				case 5:
 					shouldUnlock = habits.some(
 						(h) => {
-							const { longestStreak } = getStreaks(h.completedDays, h.frequency);
+							const { longestStreak } = getStreaks(h.completedDays, h.frequency, h.periodDays || 1);
 							return longestStreak >= a.criteria.streak;
 						}
 					);
@@ -56,7 +56,7 @@ function achievementsReducer(achievements, actions) {
 				case 6:
 					shouldUnlock = habits.some(
 						(h) => {
-							const maxGap = Math.max(...getCompletionGaps(h.completedDays, h.frequency));
+							const maxGap = Math.max(...getCompletionGaps(h.completedDays, h.frequency, h.periodDays || 1));
 							return maxGap >= a.criteria.gap;
 						}
 					);
@@ -65,7 +65,7 @@ function achievementsReducer(achievements, actions) {
 				case 7:
 					shouldUnlock = habits.some(
 						(h) => {
-							const gaps = getCompletionGaps(h.completedDays, h.frequency);
+							const gaps = getCompletionGaps(h.completedDays, h.frequency, h.periodDays || 1);
 							return gaps.includes(a.criteria.gap);
 						}
 					);
@@ -96,7 +96,7 @@ function achievementsReducer(achievements, actions) {
 							const month = creationDate.getMonth();
 
 							if (day === 1 && month === 0) {
-								return checkHabitCompletion(h.completedDays, h.frequency, creationDate);
+								return checkHabitCompletion(h.completedDays, h.frequency, h.periodDays || 1, creationDate);
 							};
 
 							return false;
@@ -123,7 +123,7 @@ function achievementsReducer(achievements, actions) {
 				case 11:
 					shouldUnlock = habits.some(
 						(h) => {
-							const { allStreaks } = getStreaks(h.completedDays, h.frequency);
+							const { allStreaks } = getStreaks(h.completedDays, h.frequency, h.periodDays || 1);
 
 							return allStreaks.some(
 								(s) => {
@@ -150,7 +150,7 @@ function achievementsReducer(achievements, actions) {
 
 					const datesMap = {};
 					for (const h of habits) {
-						const completedDays = removeIncompleteFirstDay(h.completedDays, h.frequency);
+						const completedDays = removeIncompleteFirstDay(h.completedDays, h.frequency, h.periodDays || 1);
 
 						for (const d of completedDays) {
 							const date = d.date
@@ -167,7 +167,7 @@ function achievementsReducer(achievements, actions) {
 				case 13:
 					shouldUnlock = habits.some(
 						(h) => {
-							const { allStreaks } = getStreaks(h.completedDays, h.frequency);
+							const { allStreaks } = getStreaks(h.completedDays, h.frequency, h.periodDays || 1);
 
 							return allStreaks.some(
 								(s) => {
@@ -190,7 +190,7 @@ function achievementsReducer(achievements, actions) {
 				case 15:
 					shouldUnlock = habits.some(
 						(h) => {
-							const { allStreaks } = getStreaks(h.completedDays, h.frequency);
+							const { allStreaks } = getStreaks(h.completedDays, h.frequency, h.periodDays || 1);
 
 							for (let i = 0; i < allStreaks.length - 2; i++) {
 								if (
@@ -228,7 +228,7 @@ function achievementsReducer(achievements, actions) {
 
 					const datesMap = {};
 					for (const h of habits) {
-						const completedDays = removeIncompleteFirstDay(h.completedDays, h.frequency);
+						const completedDays = removeIncompleteFirstDay(h.completedDays, h.frequency, h.periodDays || 1);
 
 						for (const d of completedDays) {
 							const date = new Date(d.date);
@@ -254,7 +254,7 @@ function achievementsReducer(achievements, actions) {
 
 					const datesMap = {};
 					for (const h of habits) {
-						const completedDays = removeIncompleteFirstDay(h.completedDays, h.frequency);
+						const completedDays = removeIncompleteFirstDay(h.completedDays, h.frequency, h.periodDays || 1);
 
 						for (const d of completedDays) {
 							const date = new Date(d.date);
@@ -290,7 +290,7 @@ function achievementsReducer(achievements, actions) {
 				case 20:
 					shouldUnlock = habits.some(
 						(h) => {
-							const completedDays = removeIncompleteFirstDay(h.completedDays, h.frequency);
+							const completedDays = removeIncompleteFirstDay(h.completedDays, h.frequency, h.periodDays || 1);
 							const completedWeekends = completedDays.filter(
 								(d) => {
 									const day = new Date(d.date).getDay();

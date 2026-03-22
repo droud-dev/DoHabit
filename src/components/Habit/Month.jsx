@@ -11,7 +11,7 @@ function Month(props) {
 		date,
 
 		colorPalette,
-		completedDays, frequency,
+		completedDays, frequency, periodDays,
 
 		visibleMonthsCount, isDaySquare, dayGap, dayBorderRadius
 	} = props;
@@ -46,7 +46,7 @@ function Month(props) {
 		(_, i) => new Date(date.getFullYear(), date.getMonth(), (i - shift + 1))
 	);
 
-	const checkedDates = checkHabitCompletion(completedDays, frequency, ...dates);
+	const checkedDates = checkHabitCompletion(completedDays, frequency, periodDays, ...dates);
 
 	const days = checkedDates
 		.map((isCompleted, index) => {

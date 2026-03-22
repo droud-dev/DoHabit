@@ -11,7 +11,7 @@ function updateHabitProgress(habits, title) {
 		habit = { ...habit };
 
 		if (habit.title === title) {
-			const isCompleted = checkHabitCompletion(habit.completedDays, habit.frequency, new Date());
+			const isCompleted = checkHabitCompletion(habit.completedDays, habit.frequency, habit.periodDays || 1, new Date());
 			let completedDays = [...habit.completedDays];
 
 			if (isCompleted) {

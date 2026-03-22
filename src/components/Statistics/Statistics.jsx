@@ -24,7 +24,7 @@ function Statistics() {
 	const location = useLocation();
 
 	const {
-		completedDays, frequency, colorPalette
+		completedDays, frequency, periodDays, colorPalette
 	} = location.state;
 
 	const { baseColor, darkenedColor } = colorPalette;
@@ -46,8 +46,8 @@ function Statistics() {
 	);
 
 	// --- Streaks:START ---
-	const { currentStreak } = getStreaks(completedDays, frequency);
-	const { allStreaks, longestStreak } = getStreaks(selectedDays, frequency);
+	const { currentStreak } = getStreaks(completedDays, frequency, periodDays || 1);
+	const { allStreaks, longestStreak } = getStreaks(selectedDays, frequency, periodDays || 1);
 	const filteredStreaks = allStreaks.filter((s) => s.length > 1);
 	// --- Streaks:END ---
 

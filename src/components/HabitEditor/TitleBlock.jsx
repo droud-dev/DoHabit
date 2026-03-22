@@ -1,24 +1,9 @@
 import styles from '../../css/TitleBlock.module.css';
 
-// react
-import { useEffect, useState } from 'react';
-
 function TitleBlock({ input, alreadyExist, onChange }) {
-	// error message
-	const [errorMessage, setErrorMessage] = useState('');
-
-	useEffect(() => {
-		if (alreadyExist) {
-			setErrorMessage(input
-				? 'A habit with this name already exists.'
-				: 'Title field cannot be empty.'
-			);
-		} else {
-			setErrorMessage('');
-		};
-
-		return () => setErrorMessage('');
-	}, [input, alreadyExist]);
+	const errorMessage = alreadyExist
+		? (input ? 'A habit with this name already exists.' : 'Title field cannot be empty.')
+		: '';
 
 	return (
 		<section>

@@ -8,7 +8,7 @@ function editHabit(habits, title, updatedHabit, newIndex) {
 			habit = { ...habit };
 
 			if (habit.title === title) {
-				const frequencyWasChanged = habit.frequency !== updatedHabit.frequency;
+				const frequencyWasChanged = habit.frequency !== updatedHabit.frequency || habit.periodDays !== updatedHabit.periodDays;
 
 				const updatedCompletedDays = frequencyWasChanged
 					? updateCompletedDays(habit.completedDays, updatedHabit.frequency)

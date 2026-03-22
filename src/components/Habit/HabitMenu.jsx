@@ -40,7 +40,7 @@ const contentVariants = {
 function HabitMenu(props) {
 	const {
 		title, completedDays, colorIndex, colorPalette,
-		isTodayCompleted, isYesterdayCompleted, todayProgress, frequency, currentStreak,
+		isTodayCompleted, isYesterdayCompleted, todayProgress, frequency, periodDays, currentStreak,
 		onShowMenu, onShare,
 		isProgressive, progressionMode, currentStage, stages,
 	} = props;
@@ -79,7 +79,7 @@ function HabitMenu(props) {
 
 	const buttons = [[
 		isYesterdayCompleted ? <FaCalendarTimes /> : <FaCalendarCheck />,
-		(isYesterdayCompleted ? 'Uncomp.' : 'Comp.') + ' Y\'day',
+		isYesterdayCompleted ? 'Undo yesterday' : 'Do yesterday',
 		isYesterdayCompleted ? 'IndianRed' : darkenedColor,
 		null,
 		null,
@@ -112,6 +112,7 @@ function HabitMenu(props) {
 			colorPalette,
 			colorIndex,
 			frequency,
+			periodDays,
 			modalTitle: title,
 		},
 		null,

@@ -146,4 +146,98 @@ describe('initHabits', () => {
 			expect.objectContaining({ title: 'Test', isProgressive: false }),
 		]));
 	});
+
+	// periodDays migration tests
+	describe('periodDays migration', () => {
+		it('should add periodDays: 1 to habits lacking the field', () => {
+			const legacyHabit = {
+				title: 'Old habit',
+				frequency: 1,
+				completedDays: [{ date: '2025-03-10', progress: 1 }],
+			};
+			getFromLocalStorage.mockReturnValue([legacyHabit]);
+
+			const result = initHabits();
+
+			expect(result[0].periodDays).toBe(1);
+		});
+
+		it('should not overwrite existing periodDays value', () => {
+			const habitWithPeriod = {
+				title: 'Weekly habit',
+				frequency: 2,
+				periodDays: 7,
+				completedDays: [],
+				isProgressive: false,
+				stages: [],
+				currentStage: 0,
+				progressionMode: 'manual',
+				progressionInterval: 7,
+				completionsSinceStageStart: 0,
+				stageAdvancementDate: null,
+			};
+			getFromLocalStorage.mockReturnValue([habitWithPeriod]);
+
+			const result = initHabits();
+
+			expect(result[0].periodDays).toBe(7);
+		});
+
+		it('should pass periodDays to removeIncompleteDays as third argument', () => {
+			const habit = {
+				title: 'Test',
+				frequency: 2,
+				periodDays: 7,
+				completedDays: [{ date: '2025-03-10', progress: 1 }],
+				isProgressive: false,
+				stages: [],
+				currentStage: 0,
+				progressionMode: 'manual',
+				progressionInterval: 7,
+				completionsSinceStageStart: 0,
+				stageAdvancementDate: null,
+			};
+			getFromLocalStorage.mockReturnValue([habit]);
+
+			initHabits();
+
+			expect(removeIncompleteDays).toHaveBeenCalledWith(
+				[{ date: '2025-03-10', progress: 1 }],
+				2,
+				7
+			);
+		});
+
+		it('should pass periodDays 1 to removeIncompleteDays for migrated habits', () => {
+			const legacyHabit = {
+				title: 'Legacy',
+				frequency: 1,
+				completedDays: [{ date: '2025-03-10', progress: 1 }],
+			};
+			getFromLocalStorage.mockReturnValue([legacyHabit]);
+
+			initHabits();
+
+			expect(removeIncompleteDays).toHaveBeenCalledWith(
+				[{ date: '2025-03-10', progress: 1 }],
+				1,
+				1
+			);
+		});
+
+		it('should add periodDays before progressive migration runs', () => {
+			const legacyHabit = {
+				title: 'Old',
+				frequency: 1,
+				completedDays: [],
+			};
+			getFromLocalStorage.mockReturnValue([legacyHabit]);
+
+			const result = initHabits();
+
+			// Both periodDays and progressive fields should be set
+			expect(result[0].periodDays).toBe(1);
+			expect(result[0].isProgressive).toBe(false);
+		});
+	});
 });

@@ -5,7 +5,7 @@ function getCompletionCountPerMonth(completedDays, frequency) {
 	};
 
 	for (const day of completedDays) {
-		if (day.progress < frequency) continue;
+		if (day.progress <= 0) continue;
 		const month = new Date(day.date).getMonth();
 		months[month] += 1;
 	};

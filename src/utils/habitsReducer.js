@@ -24,6 +24,7 @@ function habitsReducer(habits, action) {
 		colorIndex: Number(data.colorIndex.value),
 		iconTitle: data.iconTitle.value,
 		frequency: Number(data.frequency.value),
+		periodDays: Number(data.periodDays?.value) || 1,
 		completedDays: [],
 		isProgressive: data.isProgressive?.value === 'true',
 		stages: JSON.parse(data.stages?.value || '[]'),

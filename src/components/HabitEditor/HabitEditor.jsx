@@ -109,7 +109,7 @@ function HabitEditor() {
 				/>
 
 				<FrequencyBlock
-					{...{ currentFrequency: habit?.frequency }}
+					{...{ currentFrequency: habit?.frequency, currentPeriodDays: habit?.periodDays }}
 				/>
 
 				<ProgressiveBlock

@@ -15,7 +15,8 @@ import { MdOutlineSettingsBackupRestore } from "react-icons/md";
 
 function HabitHeader(props) {
 	const {
-		title, icon, frequency, diary, colorPalette,
+		// eslint-disable-next-line no-unused-vars
+		title, icon, frequency, periodDays, diary, colorPalette,
 		isTodayCompleted, todayProgress, currentStreak,
 		isArchive,
 		isProgressive, stages, currentStage,

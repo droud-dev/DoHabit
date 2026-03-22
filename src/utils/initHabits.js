@@ -12,9 +12,11 @@ function initHabits() {
 		(h) => {
 			const newH = { ...h };
 
+			if (!newH.periodDays) newH.periodDays = 1;
+
 			if (newH.frequency && Array.isArray(newH.completedDays)) {
 				// remove incomplete days before today with progress less than habit frequency
-				newH.completedDays = removeIncompleteDays(newH.completedDays, newH.frequency);
+				newH.completedDays = removeIncompleteDays(newH.completedDays, newH.frequency, newH.periodDays || 1);
 			};
 
 			// add default progressive fields for backward compatibility

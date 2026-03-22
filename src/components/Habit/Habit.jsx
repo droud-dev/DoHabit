@@ -29,7 +29,7 @@ yesterday.setDate(today.getDate() - 1);
 
 function Habit(props) {
 	const {
-		index, color, completedDays, frequency,
+		index, color, completedDays, frequency, periodDays,
 		isMenuVisible, isArchive,
 		onShowMenu
 	} = props;
@@ -38,21 +38,21 @@ function Habit(props) {
 	const habitRef = useRef(null);
 	const colorPalette = useMemo(() => getColorPalette(color), [color]);
 	const todayProgress = getTodayProgress(completedDays);
-	const { currentStreak } = getStreaks(completedDays, frequency);
+	const { currentStreak } = getStreaks(completedDays, frequency, periodDays);
 
 	const [
 		isTodayCompleted,
 		isYesterdayCompleted
 	] = useMemo(
-		() => checkHabitCompletion(completedDays, frequency, today, yesterday),
-		[completedDays, frequency]
+		() => checkHabitCompletion(completedDays, frequency, periodDays, today, yesterday),
+		[completedDays, frequency, periodDays]
 	);
 
 	const handleShare = () => shareHabit(habitRef.current);
 
 	const calendar = useMemo(
 		() => {
-			const props = { colorPalette, completedDays, frequency };
+			const props = { colorPalette, completedDays, frequency, periodDays };
 
 			return settings.calendarView === 'compact' ? (
 				<CompactCalendar {...props} />
@@ -60,7 +60,7 @@ function Habit(props) {
 				<Calendar {...props} />
 			);
 		},
-		[colorPalette, completedDays, frequency, settings.calendarView]
+		[colorPalette, completedDays, frequency, periodDays, settings.calendarView]
 	);
 
 	const habitVariants = getListAnimationVariants(0.3);
