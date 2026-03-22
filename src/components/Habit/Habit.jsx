@@ -51,6 +51,9 @@ function Habit(props) {
 
 	const isTodayCompleted = useMemo(
 		() => checkHabitCompletion(completedDays, frequency, periodDays, today),
+		// todayStr (not today) in deps: stable string proxy that only changes at midnight,
+		// avoiding the new-object-each-render problem while still invalidating correctly.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[completedDays, frequency, periodDays, todayStr]
 	);
 
