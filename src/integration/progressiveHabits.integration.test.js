@@ -131,7 +131,7 @@ describe('Progressive Habits Integration', () => {
 			expect(habit.progressionMode).toBe('manual');
 			expect(habit.completionsSinceStageStart).toBe(0);
 			expect(habit.stageAdvancementDate).toBeNull();
-			expect(habit.creationDate).toBeInstanceOf(Date);
+			expect(habit.creationDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
 		});
 	});
 

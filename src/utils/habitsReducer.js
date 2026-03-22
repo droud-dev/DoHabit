@@ -13,6 +13,7 @@ import toggleDayCompletion from './toggleDayCompletion';
 import toggleDayFreeze from './toggleDayFreeze';
 import scrollToTop from './scrollToTop';
 
+import getFormattedDate from './getFormattedDate';
 import saveToLocalStorage from './saveToLocalStorage';
 
 function habitsReducer(habits, action) {
@@ -44,7 +45,7 @@ function habitsReducer(habits, action) {
 
 		// habits
 		case 'addHabit':
-			habits = [{ ...newHabit, creationDate: new Date() }, ...habits];
+			habits = [{ ...newHabit, creationDate: getFormattedDate(new Date()) }, ...habits];
 			scrollToTop();
 			break;
 

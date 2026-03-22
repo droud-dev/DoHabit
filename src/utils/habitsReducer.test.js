@@ -164,7 +164,7 @@ describe('habitsReducer', () => {
 			});
 
 			const habit = result[0];
-			expect(habit.creationDate).toBeInstanceOf(Date);
+			expect(habit.creationDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
 			expect(habit.completedDays).toEqual([]);
 		});
 	});

@@ -8,10 +8,10 @@
  */
 function isWithinPeriod(date, endDate, periodDays) {
 	const dayInMs = 24 * 60 * 60 * 1000;
-	const windowStart = new Date(endDate.getTime() - (periodDays * dayInMs));
 	const targetDate = new Date(date);
+	const diffDays = Math.round((endDate - targetDate) / dayInMs);
 
-	return targetDate > windowStart && targetDate <= endDate;
+	return diffDays >= 0 && diffDays < periodDays;
 }
 
 export default isWithinPeriod;

@@ -1,12 +1,9 @@
 function toggleDayFreeze(habits, habitTitle, dateString, isFrozen) {
 	return habits.map((habit) => {
 		if (habit.title !== habitTitle) return habit;
-		let completedDays = [...habit.completedDays];
+		let completedDays = habit.completedDays.filter((d) => d.date !== dateString);
 
-		if (isFrozen) {
-			completedDays = completedDays.filter((d) => d.date !== dateString);
-		} else {
-			completedDays = completedDays.filter((d) => d.date !== dateString);
+		if (!isFrozen) {
 			const entry = { date: dateString, progress: 0, freeze: true };
 			const insertIdx = completedDays.findIndex((d) => d.date < dateString);
 			insertIdx === -1

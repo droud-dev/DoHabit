@@ -112,6 +112,16 @@ describe('toggleDayCompletion', () => {
 		});
 	});
 
+	describe('duplicate prevention', () => {
+		it('should not create duplicate entries when inserting a date that already exists', () => {
+			const result = toggleDayCompletion(baseHabits, 'Exercise', '2026-03-20', false, 2);
+
+			const matching = result[0].completedDays.filter((d) => d.date === '2026-03-20');
+			expect(matching.length).toBe(1);
+			expect(matching[0].progress).toBe(2);
+		});
+	});
+
 	describe('non-matching habits passthrough', () => {
 		it('should return non-matching habits unchanged', () => {
 			const result = toggleDayCompletion(baseHabits, 'Exercise', '2026-03-18', true, 1);

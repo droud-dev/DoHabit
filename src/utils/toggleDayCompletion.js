@@ -6,6 +6,7 @@ function toggleDayCompletion(habits, habitTitle, dateString, isCompleted, freque
 		if (isCompleted) {
 			completedDays = completedDays.filter((d) => d.date !== dateString);
 		} else {
+			completedDays = completedDays.filter((d) => d.date !== dateString);
 			const entry = { date: dateString, progress: frequency, ...entryFlags };
 			const insertIdx = completedDays.findIndex((d) => d.date < dateString);
 			insertIdx === -1

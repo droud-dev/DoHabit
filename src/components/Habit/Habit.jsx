@@ -19,7 +19,7 @@ import NoteInput from './NoteInput';
 
 // utils
 import getColorPalette from '../../utils/getColorPalette';
-import getTodayProgress from '../../utils//getTodayProgress';
+import getTodayProgress from '../../utils/getTodayProgress';
 import getStreaks from '../../utils/getStreaks';
 import getNegativeStreak from '../../utils/getNegativeStreak';
 import checkHabitCompletion from '../../utils/checkHabitCompletion';
@@ -27,16 +27,17 @@ import shareHabit from '../../utils/shareHabit';
 import getListAnimationVariants from '../../utils/getListAnimationVariants';
 import getFormattedDate from '../../utils/getFormattedDate';
 
-const today = new Date();
-const yesterday = new Date(today);
-yesterday.setDate(today.getDate() - 1);
-
 function Habit(props) {
 	const {
 		index, color, completedDays, frequency, periodDays,
 		isMenuVisible, isArchive, isNegative, creationDate,
 		onShowMenu, title
 	} = props;
+
+	const today = new Date();
+	const yesterday = new Date(today);
+	yesterday.setDate(today.getDate() - 1);
+	const todayStr = getFormattedDate(today);
 
 	const settings = useSettingsStore((s) => s.settings);
 	const habitRef = useRef(null);
@@ -50,7 +51,7 @@ function Habit(props) {
 
 	const isTodayCompleted = useMemo(
 		() => checkHabitCompletion(completedDays, frequency, periodDays, today),
-		[completedDays, frequency, periodDays]
+		[completedDays, frequency, periodDays, todayStr]
 	);
 
 	const habitsDispatch = useHabitsStore((s) => s.habitsDispatch);

@@ -29,7 +29,7 @@ import { IoIosArrowForward } from 'react-icons/io'; // next stage
 // --- Variants:START ---
 const bgVariants = {
 	initial: { opacity: 0 },
-	animate: { opacity: 100 },
+	animate: { opacity: 1 },
 	exit: { opacity: 0 },
 	transition: { duration: .2, ease: 'easeOut' }
 };
