@@ -9,7 +9,8 @@ import deleteNote from './deleteNote';
 import editNote from './editNote';
 
 import archiveHabit from './archiveHabit';
-import toggleCompleteYeserday from './toggleCompleteYeserday';
+import toggleDayCompletion from './toggleDayCompletion';
+import toggleDayFreeze from './toggleDayFreeze';
 import scrollToTop from './scrollToTop';
 
 import saveToLocalStorage from './saveToLocalStorage';
@@ -58,8 +59,12 @@ function habitsReducer(habits, action) {
 			habits = editHabit(habits, habitTitle, newHabit, data.order.value - 1);
 			break;
 
-		case 'toggleCompleteYeserday':
-			habits = toggleCompleteYeserday(habits, habitTitle, action.isTodayCompleted, action.isYesterdayCompleted, action.todayProgress, action.frequency);
+		case 'toggleDayCompletion':
+			habits = toggleDayCompletion(habits, habitTitle, action.date, action.isCompleted, action.frequency, action.entryFlags);
+			break;
+
+		case 'toggleDayFreeze':
+			habits = toggleDayFreeze(habits, habitTitle, action.date, action.isFrozen);
 			break;
 
 		case 'updateProgress':

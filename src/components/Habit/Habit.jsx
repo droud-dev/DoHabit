@@ -1,7 +1,7 @@
 import styles from '../../css/Habit.module.css';
 
 // react
-import { useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 // framer
 import { AnimatePresence, motion } from 'framer-motion';
@@ -40,19 +40,28 @@ function Habit(props) {
 	const todayProgress = getTodayProgress(completedDays);
 	const { currentStreak } = getStreaks(completedDays, frequency, periodDays);
 
-	const [
-		isTodayCompleted,
-		isYesterdayCompleted
-	] = useMemo(
-		() => checkHabitCompletion(completedDays, frequency, periodDays, today, yesterday),
+	const [selectedDate, setSelectedDate] = useState(yesterday);
+
+	const isTodayCompleted = useMemo(
+		() => checkHabitCompletion(completedDays, frequency, periodDays, today),
 		[completedDays, frequency, periodDays]
 	);
+
+	const handleCellClick = useCallback((date) => {
+		setSelectedDate(date);
+		onShowMenu(index);
+	}, [onShowMenu, index]);
+
+	const handleShowMenu = (i) => {
+		if (i === -1) setSelectedDate(yesterday);
+		onShowMenu(i);
+	};
 
 	const handleShare = () => shareHabit(habitRef.current);
 
 	const calendar = useMemo(
 		() => {
-			const props = { colorPalette, completedDays, frequency, periodDays };
+			const props = { colorPalette, completedDays, frequency, periodDays, onCellClick: handleCellClick };
 
 			return settings.calendarView === 'compact' ? (
 				<CompactCalendar {...props} />
@@ -60,7 +69,7 @@ function Habit(props) {
 				<Calendar {...props} />
 			);
 		},
-		[colorPalette, completedDays, frequency, periodDays, settings.calendarView]
+		[colorPalette, completedDays, frequency, periodDays, settings.calendarView, handleCellClick]
 	);
 
 	const habitVariants = getListAnimationVariants(0.3);
@@ -71,7 +80,7 @@ function Habit(props) {
 			className={styles.habit}
 			{...habitVariants}
 			layout
-			onClick={() => onShowMenu(index)}
+			onClick={() => { setSelectedDate(yesterday); onShowMenu(index); }}
 		>
 			<HabitHeader
 				{...{ ...props, colorPalette }}
@@ -89,8 +98,8 @@ function Habit(props) {
 					<HabitMenu
 						key="habitMenu"
 						{...props}
-						{...{ colorPalette, isTodayCompleted, isYesterdayCompleted, todayProgress, currentStreak }}
-						onShowMenu={onShowMenu}
+						{...{ colorPalette, currentStreak, selectedDate }}
+						onShowMenu={handleShowMenu}
 						onShare={handleShare}
 					/>
 				)}

@@ -107,11 +107,12 @@ function achievementsReducer(achievements, actions) {
 				case 10:
 					shouldUnlock = habits.some(
 						(h) => {
-							const count = h.completedDays.length;
+							const nonFrozen = h.completedDays.filter((d) => !d.freeze);
+							const count = nonFrozen.length;
 
 							if (count >= a.criteria.count) {
 								return count === a.criteria.count
-									? h.completedDays[0].progress >= h.frequency
+									? nonFrozen[0]?.progress >= h.frequency
 									: true;
 							};
 
@@ -150,7 +151,7 @@ function achievementsReducer(achievements, actions) {
 
 					const datesMap = {};
 					for (const h of habits) {
-						const completedDays = removeIncompleteFirstDay(h.completedDays, h.frequency, h.periodDays || 1);
+						const completedDays = removeIncompleteFirstDay(h.completedDays, h.frequency, h.periodDays || 1).filter((d) => !d.freeze);
 
 						for (const d of completedDays) {
 							const date = d.date
@@ -228,7 +229,7 @@ function achievementsReducer(achievements, actions) {
 
 					const datesMap = {};
 					for (const h of habits) {
-						const completedDays = removeIncompleteFirstDay(h.completedDays, h.frequency, h.periodDays || 1);
+						const completedDays = removeIncompleteFirstDay(h.completedDays, h.frequency, h.periodDays || 1).filter((d) => !d.freeze);
 
 						for (const d of completedDays) {
 							const date = new Date(d.date);
@@ -254,7 +255,7 @@ function achievementsReducer(achievements, actions) {
 
 					const datesMap = {};
 					for (const h of habits) {
-						const completedDays = removeIncompleteFirstDay(h.completedDays, h.frequency, h.periodDays || 1);
+						const completedDays = removeIncompleteFirstDay(h.completedDays, h.frequency, h.periodDays || 1).filter((d) => !d.freeze);
 
 						for (const d of completedDays) {
 							const date = new Date(d.date);
@@ -290,7 +291,7 @@ function achievementsReducer(achievements, actions) {
 				case 20:
 					shouldUnlock = habits.some(
 						(h) => {
-							const completedDays = removeIncompleteFirstDay(h.completedDays, h.frequency, h.periodDays || 1);
+							const completedDays = removeIncompleteFirstDay(h.completedDays, h.frequency, h.periodDays || 1).filter((d) => !d.freeze);
 							const completedWeekends = completedDays.filter(
 								(d) => {
 									const day = new Date(d.date).getDay();

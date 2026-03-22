@@ -14,7 +14,7 @@ function removeIncompleteDays(completedDays, frequency, periodDays) {
 				};
 
 				const isBeforeToday = new Date(d.date) < today;
-				const hasNoProgress = d.progress <= 0;
+				const hasNoProgress = d.progress <= 0 && !d.freeze;
 
 				return !(isBeforeToday && hasNoProgress);
 			}
@@ -28,7 +28,7 @@ function removeIncompleteDays(completedDays, frequency, periodDays) {
 			};
 
 			const isBeforeToday = new Date(d.date) < today;
-			const isIncomplete = d.progress < frequency;
+			const isIncomplete = d.progress < frequency && !d.freeze;
 
 			return !(isBeforeToday && isIncomplete);
 		}

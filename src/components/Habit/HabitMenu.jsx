@@ -12,12 +12,17 @@ import { useHabitsStore } from '../../stores/habitsStore';
 // components
 import Button from '../Button';
 
+// utils
+import checkHabitCompletion from '../../utils/checkHabitCompletion';
+import getFormattedDate from '../../utils/getFormattedDate';
+
 // icons
 import { MdEditSquare } from 'react-icons/md'; // edit
 import { MdLibraryBooks } from 'react-icons/md'; // diary
 import { FaShareAltSquare } from 'react-icons/fa';
 import { FaCalendarCheck } from 'react-icons/fa';
 import { FaCalendarTimes } from 'react-icons/fa';
+import { FaRegSnowflake } from 'react-icons/fa';
 import { FaChartSimple } from 'react-icons/fa6';
 import { IoIosArrowForward } from 'react-icons/io'; // next stage
 
@@ -40,13 +45,30 @@ const contentVariants = {
 function HabitMenu(props) {
 	const {
 		title, completedDays, colorIndex, colorPalette,
-		isTodayCompleted, isYesterdayCompleted, todayProgress, frequency, periodDays, currentStreak,
+		frequency, periodDays, currentStreak, selectedDate,
 		onShowMenu, onShare,
 		isProgressive, progressionMode, currentStage, stages,
 	} = props;
 
 	const habitsDispatch = useHabitsStore((s) => s.habitsDispatch);
 	const { darkenedColor } = colorPalette;
+
+	const isSelectedCompleted = checkHabitCompletion(completedDays, frequency, periodDays, selectedDate);
+
+	const todayStr = getFormattedDate(new Date());
+	const yesterday = new Date();
+	yesterday.setDate(yesterday.getDate() - 1);
+	const yesterdayStr = getFormattedDate(yesterday);
+	const selectedStr = getFormattedDate(selectedDate);
+
+	const isSelectedToday = selectedStr === todayStr;
+	const isSelectedYesterday = selectedStr === yesterdayStr;
+
+	const dateLabel = isSelectedToday ? 'today'
+		: isSelectedYesterday ? 'yesterday'
+		: selectedDate.toLocaleDateString('en', { month: 'short', day: 'numeric' });
+
+	const buttonLabel = (isSelectedCompleted ? 'Undo ' : 'Do ') + dateLabel;
 
 	const handleDragEnd = (_, info) => {
 		if (info.offset.y >= 100) {
@@ -55,14 +77,27 @@ function HabitMenu(props) {
 		};
 	};
 
-	const handleCompleteYeserday = () => {
+	const handleToggleDayCompletion = () => {
+		const entryFlags = isSelectedYesterday ? { isCompYdayBtnUsed: true } : {};
 		habitsDispatch({
-			type: 'toggleCompleteYeserday',
+			type: 'toggleDayCompletion',
 			habitTitle: title,
-			isTodayCompleted,
-			isYesterdayCompleted,
-			todayProgress,
-			frequency
+			date: selectedStr,
+			isCompleted: isSelectedCompleted,
+			frequency,
+			entryFlags,
+		});
+	};
+
+	const isFrozen = completedDays.some((d) => d.date === selectedStr && d.freeze);
+	const freezeLabel = (isFrozen ? 'Unfreeze ' : 'Freeze ') + dateLabel;
+
+	const handleToggleDayFreeze = () => {
+		habitsDispatch({
+			type: 'toggleDayFreeze',
+			habitTitle: title,
+			date: selectedStr,
+			isFrozen,
 		});
 	};
 
@@ -77,13 +112,21 @@ function HabitMenu(props) {
 		&& progressionMode === 'manual'
 		&& currentStage < stages.length - 1;
 
-	const buttons = [[
-		isYesterdayCompleted ? <FaCalendarTimes /> : <FaCalendarCheck />,
-		isYesterdayCompleted ? 'Undo yesterday' : 'Do yesterday',
-		isYesterdayCompleted ? 'IndianRed' : darkenedColor,
+	const buttons = [
+	...(isFrozen ? [] : [[
+		isSelectedCompleted ? <FaCalendarTimes /> : <FaCalendarCheck />,
+		buttonLabel,
+		isSelectedCompleted ? 'IndianRed' : darkenedColor,
 		null,
 		null,
-		() => handleCompleteYeserday()
+		() => handleToggleDayCompletion()
+	]]), [
+		<FaRegSnowflake />,
+		freezeLabel,
+		darkenedColor,
+		null,
+		null,
+		() => handleToggleDayFreeze()
 	], [
 		<MdEditSquare />,
 		'Edit Habit',

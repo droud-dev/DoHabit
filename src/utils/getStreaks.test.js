@@ -108,6 +108,51 @@ describe('getStreaks', () => {
 		expect(() => getStreaks([], 1, 7)).not.toThrow();
 	});
 
+	// === Frozen day preserves streak ===
+
+	it('should preserve streak when a frozen day is in the middle (daily)', () => {
+		const today = getFormattedDate(new Date());
+		const yesterday = new Date();
+		yesterday.setDate(yesterday.getDate() - 1);
+		const twoDaysAgo = new Date();
+		twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+
+		const completedDays = [
+			{ date: today, progress: 1 },
+			{ date: getFormattedDate(yesterday), progress: 0, freeze: true },
+			{ date: getFormattedDate(twoDaysAgo), progress: 1 },
+		];
+		const result = getStreaks(completedDays, 1, 1);
+		// Frozen day counts as on-track, so streak should be 3
+		expect(result.longestStreak).toBe(3);
+		expect(result.currentStreak).toBe(3);
+	});
+
+	it('should preserve streak when a frozen day is in the middle (rolling window)', () => {
+		const today = getFormattedDate(new Date());
+		const yesterday = new Date();
+		yesterday.setDate(yesterday.getDate() - 1);
+		const twoDaysAgo = new Date();
+		twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+		const threeDaysAgo = new Date();
+		threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+		const completedDays = [
+			{ date: today, progress: 1 },
+			{ date: getFormattedDate(yesterday), progress: 0, freeze: true },
+			{ date: getFormattedDate(twoDaysAgo), progress: 1 },
+			{ date: getFormattedDate(threeDaysAgo), progress: 1 },
+		];
+		// frequency=2, periodDays=7
+		// today: window has progress 1+0+1+1=3 >= 2 -> on track
+		// yesterday: frozen -> on track (early return)
+		// twoDaysAgo: window has 1+1=2 >= 2 -> on track
+		// threeDaysAgo: window has 1 < 2 -> not on track
+		const result = getStreaks(completedDays, 2, 7);
+		expect(result.longestStreak).toBe(3);
+		expect(result.currentStreak).toBe(3);
+	});
+
 	it('should pass periodDays to removeIncompleteFirstDay', () => {
 		const today = getFormattedDate(new Date());
 		const twoDaysAgo = new Date();

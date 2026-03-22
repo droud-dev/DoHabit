@@ -44,4 +44,24 @@ describe('removeIncompleteDays', () => {
 	it('should handle empty array', () => {
 		expect(removeIncompleteDays([], 1, 1)).toEqual([]);
 	});
+
+	// === Frozen entry guards ===
+
+	it('should not filter out frozen entry before today for daily habit', () => {
+		const days = [
+			{ date: '2026-03-20', progress: 0, freeze: true },
+			{ date: '2026-03-19', progress: 1 },
+		];
+		const result = removeIncompleteDays(days, 1, 1);
+		expect(result).toEqual(days);
+	});
+
+	it('should not filter out frozen entry before today for rolling window habit', () => {
+		const days = [
+			{ date: '2026-03-20', progress: 0, freeze: true },
+			{ date: '2026-03-19', progress: 1 },
+		];
+		const result = removeIncompleteDays(days, 2, 7);
+		expect(result).toEqual(days);
+	});
 });

@@ -45,6 +45,8 @@ function Statistics() {
 		(day) => new Date(day.date).getFullYear() === selectedYear
 	);
 
+	const nonFrozenDays = selectedDays.filter((d) => !d.freeze);
+
 	// --- Streaks:START ---
 	const { currentStreak } = getStreaks(completedDays, frequency, periodDays || 1);
 	const { allStreaks, longestStreak } = getStreaks(selectedDays, frequency, periodDays || 1);
@@ -102,7 +104,7 @@ function Statistics() {
 			>
 				<WeekdayChart
 					{...{ color: baseColor }}
-					days={selectedDays}
+					days={nonFrozenDays}
 					frequency={frequency}
 					options={chartOptions}
 				/>
@@ -113,7 +115,7 @@ function Statistics() {
 				icon={<FaHashtag style={{ color: baseColor }} />}
 				contentStyle={{ fontSize: '2.2rem', fontWeight: 'bold' }}
 			>
-				{selectedDays.length}
+				{nonFrozenDays.length}
 			</Card>
 
 			<Card
@@ -122,7 +124,7 @@ function Statistics() {
 			>
 				<MonthlyChart
 					{...{ color: baseColor }}
-					days={selectedDays}
+					days={nonFrozenDays}
 					frequency={frequency}
 					options={chartOptions}
 				/>

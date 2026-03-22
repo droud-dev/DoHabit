@@ -5,6 +5,7 @@ import { useSettingsStore } from '../../stores/settingsStore';
 
 // utils
 import checkHabitCompletion from '../../utils/checkHabitCompletion';
+import getFormattedDate from '../../utils/getFormattedDate';
 
 function Month(props) {
 	const {
@@ -13,7 +14,8 @@ function Month(props) {
 		colorPalette,
 		completedDays, frequency, periodDays,
 
-		visibleMonthsCount, isDaySquare, dayGap, dayBorderRadius
+		visibleMonthsCount, isDaySquare, dayGap, dayBorderRadius,
+		onCellClick
 	} = props;
 
 	const settings = useSettingsStore((s) => s.settings);
@@ -48,6 +50,8 @@ function Month(props) {
 
 	const checkedDates = checkHabitCompletion(completedDays, frequency, periodDays, ...dates);
 
+	const frozenDateStrings = new Set(completedDays.filter(d => d.freeze).map(d => d.date));
+
 	const days = checkedDates
 		.map((isCompleted, index) => {
 			let isToday = false;
@@ -57,9 +61,11 @@ function Month(props) {
 				isToday = thisDay.toDateString() === today.toDateString();
 			};
 
+			const isFrozen = index >= shift && frozenDateStrings.has(getFormattedDate(dates[index]));
+
 			// day style
 			const dayStyle = {
-				backgroundColor: index >= shift ? isCompleted ? baseColor : darkenedColor : '',
+				backgroundColor: index >= shift ? isFrozen ? softenedColor : isCompleted ? baseColor : darkenedColor : '',
 				color: isCompleted || isToday ? 'inherit' : softenedColor,
 				border: highlightToday && isToday ? `2px solid #e6e6e6` : '',
 				borderRadius: dayBorderRadius,
@@ -73,6 +79,12 @@ function Month(props) {
 					key={index}
 					style={dayStyle}
 					className={`${index < shift ? '' : styles.day}`}
+					onClick={(e) => {
+						e.stopPropagation();
+						if (index >= shift && dates[index] <= today) {
+							onCellClick?.(dates[index]);
+						}
+					}}
 				>
 					{visibleMonthsCount === 1 && (
 						dayNum

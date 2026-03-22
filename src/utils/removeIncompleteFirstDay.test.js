@@ -61,4 +61,24 @@ describe('removeIncompleteFirstDay', () => {
 		const days = [{ date: '2026-03-21', progress: 1 }];
 		expect(removeIncompleteFirstDay(days, 1, 1)).toEqual(days);
 	});
+
+	// === Frozen entry guard ===
+
+	it('should not remove frozen entry as first day even with progress=0', () => {
+		const days = [
+			{ date: '2026-03-21', progress: 0, freeze: true },
+			{ date: '2026-03-20', progress: 1 },
+		];
+		const result = removeIncompleteFirstDay(days, 1, 1);
+		expect(result).toEqual(days);
+	});
+
+	it('should not remove frozen entry as first day for rolling window habit', () => {
+		const days = [
+			{ date: '2026-03-21', progress: 0, freeze: true },
+			{ date: '2026-03-18', progress: 1 },
+		];
+		const result = removeIncompleteFirstDay(days, 2, 7);
+		expect(result).toEqual(days);
+	});
 });

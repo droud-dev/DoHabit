@@ -4,6 +4,8 @@ function removeIncompleteFirstDay(completedDays, frequency, periodDays) {
 
 	if (completedDays.length === 0) return completedDays;
 
+	if (completedDays[0]?.freeze) return completedDays;
+
 	if (!periodDays || periodDays <= 1) {
 		// Daily habit: existing single-day logic
 		if (completedDays[0]?.progress < frequency) {

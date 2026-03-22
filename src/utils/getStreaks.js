@@ -13,8 +13,12 @@ function isOnTrack(endDate, completedDays, frequency, periodDays) {
 	if (!periodDays || periodDays <= 1) {
 		const formattedDate = getFormattedDate(endDate);
 		const day = completedDays.find((d) => d.date === formattedDate);
-		return day ? day.progress >= frequency : false;
+		return day ? (day.freeze || day.progress >= frequency) : false;
 	}
+
+	const endDateStr = getFormattedDate(endDate);
+	const endDay = completedDays.find((d) => d.date === endDateStr);
+	if (endDay?.freeze) return true;
 
 	const totalProgress = completedDays.reduce(
 		(sum, day) => {

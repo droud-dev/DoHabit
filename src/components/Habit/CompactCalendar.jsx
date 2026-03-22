@@ -5,13 +5,14 @@ import { useSettingsStore } from '../../stores/settingsStore';
 
 // utils
 import checkHabitCompletion from '../../utils/checkHabitCompletion';
+import getFormattedDate from '../../utils/getFormattedDate';
 
 function CompactCalendar({ colorPalette, completedDays, frequency, periodDays }) {
 
 	const settings = useSettingsStore((s) => s.settings);
 	const highlightToday = settings.calendarHighlightToday ?? true;
 
-	const { baseColor, darkenedColor } = colorPalette;
+	const { baseColor, darkenedColor, softenedColor } = colorPalette;
 	const months = 6;
 	const columns = months * 4;
 
@@ -22,7 +23,26 @@ function CompactCalendar({ colorPalette, completedDays, frequency, periodDays })
 
 	const checkedDates = checkHabitCompletion(completedDays, frequency, periodDays, ...dates);
 
+	const frozenFlags = dates.map(d => completedDays.some(cd => cd.date === getFormattedDate(d) && cd.freeze));
+
 	const weeks = checkedDates
+		.reduce(
+			(acc, curr, i) => {
+				const isSunday = dates[i].getDay() === 0;
+
+				if (isSunday) {
+					acc.push([curr]);
+				} else {
+					acc.length === 0 ? acc.push([curr]) : acc[acc.length - 1].unshift(curr);
+				};
+
+				return acc;
+			},
+			[]
+		)
+		.reverse();
+
+	const frozenWeeks = frozenFlags
 		.reduce(
 			(acc, curr, i) => {
 				const isSunday = dates[i].getDay() === 0;
@@ -49,12 +69,13 @@ function CompactCalendar({ colorPalette, completedDays, frequency, periodDays })
 					{w.map((isCompleted, dayIndex) => {
 
 						const isToday = weekIndex === weeks.length - 1 && dayIndex === w.length - 1;
+						const isFrozen = frozenWeeks[weekIndex]?.[dayIndex];
 
 						return (
 							<div
 								key={dayIndex}
 								style={{
-									backgroundColor: isCompleted ? baseColor : darkenedColor
+									backgroundColor: isFrozen ? softenedColor : isCompleted ? baseColor : darkenedColor
 								}}
 								className={`${styles.day} ${(highlightToday) && isToday ? styles.today : ''}`}
 							/>
