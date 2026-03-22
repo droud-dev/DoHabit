@@ -13,6 +13,7 @@ function Month(props) {
 
 		colorPalette,
 		completedDays, frequency, periodDays,
+		isNegative,
 
 		visibleMonthsCount, isDaySquare, dayGap, dayBorderRadius,
 		onCellClick
@@ -54,6 +55,7 @@ function Month(props) {
 
 	const days = checkedDates
 		.map((isCompleted, index) => {
+			const showAsCompleted = isNegative ? !isCompleted : isCompleted;
 			let isToday = false;
 
 			if (index >= shift) {
@@ -65,7 +67,7 @@ function Month(props) {
 
 			// day style
 			const dayStyle = {
-				backgroundColor: index >= shift ? isFrozen ? softenedColor : isCompleted ? baseColor : darkenedColor : '',
+				backgroundColor: index >= shift ? isFrozen ? softenedColor : showAsCompleted ? baseColor : darkenedColor : '',
 				color: isCompleted || isToday ? 'inherit' : softenedColor,
 				border: highlightToday && isToday ? `2px solid #e6e6e6` : '',
 				borderRadius: dayBorderRadius,

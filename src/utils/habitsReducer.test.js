@@ -169,6 +169,33 @@ describe('habitsReducer', () => {
 		});
 	});
 
+	describe('addHabit action with isNegative', () => {
+		it('should set isNegative to true when data.isNegative.value is "true"', () => {
+			const data = {
+				title: { value: 'Smoking' },
+				colorIndex: { value: '0' },
+				iconTitle: { value: 'star' },
+				frequency: { value: '1' },
+				isNegative: { value: 'true' },
+			};
+			const result = habitsReducer([], { type: 'addHabit', data });
+
+			expect(result[0].isNegative).toBe(true);
+		});
+
+		it('should set isNegative to false when data.isNegative is absent', () => {
+			const data = {
+				title: { value: 'Exercise' },
+				colorIndex: { value: '0' },
+				iconTitle: { value: 'star' },
+				frequency: { value: '1' },
+			};
+			const result = habitsReducer([], { type: 'addHabit', data });
+
+			expect(result[0].isNegative).toBe(false);
+		});
+	});
+
 	describe('addHabit action with periodDays', () => {
 		it('should include periodDays from form data', () => {
 			const data = {

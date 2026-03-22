@@ -7,7 +7,7 @@ import { useSettingsStore } from '../../stores/settingsStore';
 import checkHabitCompletion from '../../utils/checkHabitCompletion';
 import getFormattedDate from '../../utils/getFormattedDate';
 
-function CompactCalendar({ colorPalette, completedDays, frequency, periodDays }) {
+function CompactCalendar({ colorPalette, completedDays, frequency, periodDays, isNegative }) {
 
 	const settings = useSettingsStore((s) => s.settings);
 	const highlightToday = settings.calendarHighlightToday ?? true;
@@ -67,6 +67,7 @@ function CompactCalendar({ colorPalette, completedDays, frequency, periodDays })
 			{weeks.map((w, weekIndex) => (
 				<div key={weekIndex} className={styles.week}>
 					{w.map((isCompleted, dayIndex) => {
+						const showAsCompleted = isNegative ? !isCompleted : isCompleted;
 
 						const isToday = weekIndex === weeks.length - 1 && dayIndex === w.length - 1;
 						const isFrozen = frozenWeeks[weekIndex]?.[dayIndex];
@@ -75,7 +76,7 @@ function CompactCalendar({ colorPalette, completedDays, frequency, periodDays })
 							<div
 								key={dayIndex}
 								style={{
-									backgroundColor: isFrozen ? softenedColor : isCompleted ? baseColor : darkenedColor
+									backgroundColor: isFrozen ? softenedColor : showAsCompleted ? baseColor : darkenedColor
 								}}
 								className={`${styles.day} ${(highlightToday) && isToday ? styles.today : ''}`}
 							/>

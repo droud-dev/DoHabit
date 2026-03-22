@@ -19,6 +19,7 @@ import HabitMenu from './HabitMenu';
 import getColorPalette from '../../utils/getColorPalette';
 import getTodayProgress from '../../utils//getTodayProgress';
 import getStreaks from '../../utils/getStreaks';
+import getNegativeStreak from '../../utils/getNegativeStreak';
 import checkHabitCompletion from '../../utils/checkHabitCompletion';
 import shareHabit from '../../utils/shareHabit';
 import getListAnimationVariants from '../../utils/getListAnimationVariants';
@@ -30,7 +31,7 @@ yesterday.setDate(today.getDate() - 1);
 function Habit(props) {
 	const {
 		index, color, completedDays, frequency, periodDays,
-		isMenuVisible, isArchive,
+		isMenuVisible, isArchive, isNegative, creationDate,
 		onShowMenu
 	} = props;
 
@@ -38,7 +39,9 @@ function Habit(props) {
 	const habitRef = useRef(null);
 	const colorPalette = useMemo(() => getColorPalette(color), [color]);
 	const todayProgress = getTodayProgress(completedDays);
-	const { currentStreak } = getStreaks(completedDays, frequency, periodDays);
+	const { currentStreak } = isNegative
+		? { currentStreak: getNegativeStreak(completedDays, frequency, creationDate) }
+		: getStreaks(completedDays, frequency, periodDays);
 
 	const [selectedDate, setSelectedDate] = useState(yesterday);
 
@@ -61,7 +64,7 @@ function Habit(props) {
 
 	const calendar = useMemo(
 		() => {
-			const props = { colorPalette, completedDays, frequency, periodDays, onCellClick: handleCellClick };
+			const props = { colorPalette, completedDays, frequency, periodDays, isNegative, onCellClick: handleCellClick };
 
 			return settings.calendarView === 'compact' ? (
 				<CompactCalendar {...props} />
@@ -69,7 +72,7 @@ function Habit(props) {
 				<Calendar {...props} />
 			);
 		},
-		[colorPalette, completedDays, frequency, periodDays, settings.calendarView, handleCellClick]
+		[colorPalette, completedDays, frequency, periodDays, isNegative, settings.calendarView, handleCellClick]
 	);
 
 	const habitVariants = getListAnimationVariants(0.3);

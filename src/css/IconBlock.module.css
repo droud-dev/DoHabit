@@ -7,6 +7,25 @@
 	margin-bottom: 0.6rem;
 }
 
+/* toggle row */
+.toggleRow {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	margin-bottom: 0.6rem;
+}
+
+.toggleRow label {
+	cursor: pointer;
+	user-select: none;
+}
+
+.infoText {
+	display: block;
+	color: gray;
+	margin-bottom: 0.6rem;
+}
+
 /* iconList */
 .iconList {
 	display: grid;

@@ -28,6 +28,7 @@ function habitsReducer(habits, action) {
 		periodDays: Number(data.periodDays?.value) || 1,
 		completedDays: [],
 		isProgressive: data.isProgressive?.value === 'true',
+		isNegative: data.isNegative?.value === 'true',
 		stages: JSON.parse(data.stages?.value || '[]'),
 		currentStage: 0,
 		progressionMode: data.progressionMode?.value || 'manual',

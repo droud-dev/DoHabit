@@ -6,10 +6,11 @@ import { useState } from 'react';
 // db
 import dbIcons from '../../db/dbIcons';
 
-function IconBlock({ habits, currentIconTitle }) {
+function IconBlock({ habits, currentIconTitle, currentIsNegative }) {
 
 	const [showMore, setShowMore] = useState(false);
 	const [selectedIcon, setSelectedIcon] = useState(currentIconTitle || 'default');
+	const [isNegative, setIsNegative] = useState(currentIsNegative || false);
 
 	const currentIconIndex = dbIcons.findIndex((el) => {
 		return Array.isArray(el) && el[0] === currentIconTitle;
@@ -68,6 +69,26 @@ function IconBlock({ habits, currentIconTitle }) {
 
 	return (
 		<section>
+			<div className={styles.toggleRow}>
+				<input
+					type="checkbox"
+					id="isNegativeToggle"
+					checked={isNegative}
+					onChange={() => setIsNegative((prev) => !prev)}
+				/>
+				<label htmlFor="isNegativeToggle">
+					Reduction habit (limit/stop)
+				</label>
+			</div>
+
+			{isNegative && (
+				<small className={styles.infoText}>
+					This habit is successful when NOT tracked -- each tap logs a slip against your daily limit.
+				</small>
+			)}
+
+			<input type="hidden" name="isNegative" value={String(isNegative)} />
+
 			<div className={styles.header}>
 				<h3>Icon</h3>
 

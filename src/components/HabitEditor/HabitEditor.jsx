@@ -135,7 +135,7 @@ function HabitEditor() {
 				/>
 
 				<IconBlock
-					{...{ habits, currentIconTitle: habit?.iconTitle }}
+					{...{ habits, currentIconTitle: habit?.iconTitle, currentIsNegative: habit?.isNegative }}
 				/>
 
 				<small

@@ -10,7 +10,7 @@ import { useHabitsStore } from '../../stores/habitsStore';
 import ProgressBar from './ProgressBar';
 
 // icons
-import { FaCheck } from "react-icons/fa";
+import { FaCheck, FaTimes } from "react-icons/fa";
 import { MdOutlineSettingsBackupRestore } from "react-icons/md";
 
 function HabitHeader(props) {
@@ -20,6 +20,7 @@ function HabitHeader(props) {
 		isTodayCompleted, todayProgress, currentStreak,
 		isArchive,
 		isProgressive, stages, currentStage,
+		isNegative,
 	} = props;
 
 	const habitsDispatch = useHabitsStore((s) => s.habitsDispatch);
@@ -116,7 +117,7 @@ function HabitHeader(props) {
 						onClick={handleUpdateProgress}
 					>
 						{progressPercentage === 100 ? (
-							<FaCheck />
+							isNegative ? <FaTimes /> : <FaCheck />
 						) : (
 							<strong>{progressPercentage}%</strong>
 						)}
