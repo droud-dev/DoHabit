@@ -1,0 +1,47 @@
+/* row */
+.row {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+
+	padding: 0.4rem 0.6rem;
+	border-radius: var(--border-radius-secondary);
+}
+
+/* input */
+.input {
+	flex: 1;
+	min-width: 0;
+
+	height: 2rem;
+	padding: 0 0.6rem;
+
+	background: transparent;
+	border: none;
+	outline: none;
+	color: inherit;
+	font-size: inherit;
+}
+
+/* button */
+.button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+
+	width: 36px;
+	height: 36px;
+
+	padding: 0;
+	border: none;
+	background: transparent;
+	cursor: pointer;
+
+	font-size: 1.2rem;
+}
+
+.button:disabled {
+	opacity: 0.3;
+	cursor: default;
+}

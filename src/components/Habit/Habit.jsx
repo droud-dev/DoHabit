@@ -8,12 +8,14 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 // stores
 import { useSettingsStore } from '../../stores/settingsStore';
+import { useHabitsStore } from '../../stores/habitsStore';
 
 // components
 import HabitHeader from './HabitHeader';
 import Calendar from './Calendar';
 import CompactCalendar from './CompactCalendar';
 import HabitMenu from './HabitMenu';
+import NoteInput from './NoteInput';
 
 // utils
 import getColorPalette from '../../utils/getColorPalette';
@@ -23,6 +25,7 @@ import getNegativeStreak from '../../utils/getNegativeStreak';
 import checkHabitCompletion from '../../utils/checkHabitCompletion';
 import shareHabit from '../../utils/shareHabit';
 import getListAnimationVariants from '../../utils/getListAnimationVariants';
+import getFormattedDate from '../../utils/getFormattedDate';
 
 const today = new Date();
 const yesterday = new Date(today);
@@ -32,7 +35,7 @@ function Habit(props) {
 	const {
 		index, color, completedDays, frequency, periodDays,
 		isMenuVisible, isArchive, isNegative, creationDate,
-		onShowMenu
+		onShowMenu, title
 	} = props;
 
 	const settings = useSettingsStore((s) => s.settings);
@@ -49,6 +52,22 @@ function Habit(props) {
 		() => checkHabitCompletion(completedDays, frequency, periodDays, today),
 		[completedDays, frequency, periodDays]
 	);
+
+	const habitsDispatch = useHabitsStore((s) => s.habitsDispatch);
+	const [noteInputKey, setNoteInputKey] = useState(0);
+
+	const handleProgressTap = () => setNoteInputKey(k => k + 1);
+
+	const handleNoteSubmit = (text) => {
+		habitsDispatch({
+			type: 'addNote',
+			habitTitle: title,
+			newNote: { text, date: getFormattedDate(new Date()), streak: currentStreak }
+		});
+		setNoteInputKey(0);
+	};
+
+	const handleNoteDismiss = () => setNoteInputKey(0);
 
 	const handleCellClick = useCallback((date) => {
 		setSelectedDate(date);
@@ -88,7 +107,19 @@ function Habit(props) {
 			<HabitHeader
 				{...{ ...props, colorPalette }}
 				{...{ isTodayCompleted, todayProgress, currentStreak }}
+				onProgressTap={handleProgressTap}
 			/>
+
+			<AnimatePresence>
+				{noteInputKey > 0 && (
+					<NoteInput
+						key={noteInputKey}
+						onSubmit={handleNoteSubmit}
+						onDismiss={handleNoteDismiss}
+						colorPalette={colorPalette}
+					/>
+				)}
+			</AnimatePresence>
 
 			{!isArchive && (
 				<div className={styles.content}>

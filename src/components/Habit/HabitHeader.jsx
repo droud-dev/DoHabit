@@ -21,6 +21,7 @@ function HabitHeader(props) {
 		isArchive,
 		isProgressive, stages, currentStage,
 		isNegative,
+		onProgressTap,
 	} = props;
 
 	const habitsDispatch = useHabitsStore((s) => s.habitsDispatch);
@@ -59,6 +60,8 @@ function HabitHeader(props) {
 			type: 'updateProgress',
 			habitTitle: title
 		});
+
+		if (!isTodayCompleted) onProgressTap?.();
 	};
 
 	return (

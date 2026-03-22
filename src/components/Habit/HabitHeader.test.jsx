@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import HabitHeader from './HabitHeader';
 
@@ -115,5 +115,55 @@ describe('HabitHeader stage indicator', () => {
 
 		const statusEl = screen.getByRole('status');
 		expect(statusEl).toHaveAttribute('aria-live', 'polite');
+	});
+});
+
+describe('HabitHeader onProgressTap', () => {
+	beforeEach(() => {
+		mockDispatch.mockClear();
+	});
+
+	it('calls onProgressTap on forward tap (isTodayCompleted=false)', () => {
+		const mockOnProgressTap = jest.fn();
+
+		render(
+			<HabitHeader
+				{...baseProps}
+				isTodayCompleted={false}
+				todayProgress={0}
+				onProgressTap={mockOnProgressTap}
+			/>
+		);
+
+		const progressBtn = screen.getByRole('button');
+		fireEvent.click(progressBtn);
+
+		expect(mockOnProgressTap).toHaveBeenCalledTimes(1);
+		expect(mockDispatch).toHaveBeenCalledWith({
+			type: 'updateProgress',
+			habitTitle: 'Test Habit',
+		});
+	});
+
+	it('does NOT call onProgressTap on undo tap (isTodayCompleted=true)', () => {
+		const mockOnProgressTap = jest.fn();
+
+		render(
+			<HabitHeader
+				{...baseProps}
+				isTodayCompleted={true}
+				todayProgress={1}
+				onProgressTap={mockOnProgressTap}
+			/>
+		);
+
+		const progressBtn = screen.getByRole('button');
+		fireEvent.click(progressBtn);
+
+		expect(mockOnProgressTap).not.toHaveBeenCalled();
+		expect(mockDispatch).toHaveBeenCalledWith({
+			type: 'updateProgress',
+			habitTitle: 'Test Habit',
+		});
 	});
 });
