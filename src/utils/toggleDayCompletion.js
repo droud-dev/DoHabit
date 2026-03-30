@@ -1,3 +1,7 @@
+// utils
+import recalculateStageCompletions from './recalculateStageCompletions';
+import progressHabitStage from './progressHabitStage';
+
 function toggleDayCompletion(habits, habitTitle, dateString, isCompleted, frequency, entryFlags = {}) {
 	return habits.map((habit) => {
 		if (habit.title !== habitTitle) return habit;
@@ -14,7 +18,19 @@ function toggleDayCompletion(habits, habitTitle, dateString, isCompleted, freque
 				: completedDays.splice(insertIdx, 0, entry);
 		}
 
-		return { ...habit, completedDays };
+		habit = { ...habit, completedDays };
+
+		// Auto-progression: recalculate counter and check for advancement
+		if (habit.isProgressive && habit.progressionMode === 'auto') {
+			habit = recalculateStageCompletions(habit);
+
+			// Only trigger advancement when ADDING a completion, not undoing
+			if (!isCompleted && habit.completionsSinceStageStart >= habit.progressionInterval && habit.currentStage < habit.stages.length - 1) {
+				habit = progressHabitStage(habit);
+			}
+		}
+
+		return habit;
 	});
 }
 

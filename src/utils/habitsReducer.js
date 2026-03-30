@@ -3,6 +3,7 @@ import deleteHabit from './deleteHabit';
 import editHabit from './editHabit';
 import updateHabitProgress from './updateHabitProgress';
 import progressHabitStage from './progressHabitStage';
+import regressHabitStage from './regressHabitStage';
 
 import addNote from './addNote';
 import deleteNote from './deleteNote';
@@ -76,6 +77,12 @@ function habitsReducer(habits, action) {
 		case 'progressStage':
 			habits = habits.map(habit =>
 				habit.title === habitTitle ? progressHabitStage(habit) : habit
+			);
+			break;
+
+		case 'regressStage':
+			habits = habits.map(habit =>
+				habit.title === habitTitle ? regressHabitStage(habit) : habit
 			);
 			break;
 

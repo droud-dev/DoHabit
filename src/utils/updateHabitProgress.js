@@ -52,16 +52,17 @@ function updateHabitProgress(habits, title) {
 			};
 
 			// Auto-progression: increment counter only when day transitions to complete
-			if (habit.isProgressive && habit.progressionMode === 'auto' && newProgress >= habit.frequency) {
+			if (habit.isProgressive && habit.progressionMode === 'auto' && newProgress === habit.frequency) {
 				const updatedCounter = habit.completionsSinceStageStart + 1;
-				habit = {
-					...habit,
-					completionsSinceStageStart: updatedCounter,
-				};
 
-				// Trigger stage advancement if counter reaches interval and not at max stage
+				// Defensive: use >= for advancement check in case counter gets out of sync
 				if (updatedCounter >= habit.progressionInterval && habit.currentStage < habit.stages.length - 1) {
 					habit = progressHabitStage(habit);
+				} else {
+					habit = {
+						...habit,
+						completionsSinceStageStart: updatedCounter,
+					};
 				}
 			}
 		};

@@ -12,14 +12,28 @@
 function recalculateStageCompletions(habit) {
 	if (!habit.isProgressive) return habit;
 
-	// Normalize baseline to YYYY-MM-DD for consistent date-only comparison.
+	// Determine baseline date for counting completions.
+	// Use stageAdvancementDate if exists (last progression), otherwise use the earlier of:
+	// - creationDate
+	// - earliest completedDay date (to include retroactive completions)
+	let baselineRaw;
+	if (habit.stageAdvancementDate) {
+		baselineRaw = habit.stageAdvancementDate;
+	} else if (habit.completedDays.length > 0) {
+		const earliestCompletion = habit.completedDays[habit.completedDays.length - 1].date;
+		const creationDateOnly = new Date(habit.creationDate).toISOString().slice(0, 10);
+		baselineRaw = earliestCompletion < creationDateOnly ? earliestCompletion : creationDateOnly;
+	} else {
+		baselineRaw = habit.creationDate;
+	}
+
+	// Normalize to YYYY-MM-DD for consistent date-only comparison.
 	// stageAdvancementDate is an ISO timestamp with time (e.g. '2025-03-10T12:30:00.000Z')
-	// while completedDays[].date is YYYY-MM-DD. Using Date objects directly would
-	// exclude same-calendar-day completions (new Date('2025-03-10') is NOT >
-	// new Date('2025-03-10T12:30:00.000Z')). Using >= on date-only strings
+	// while completedDays[].date is YYYY-MM-DD. Using >= on date-only strings
 	// ensures completions on the advancement day are counted toward the new stage.
-	const baselineRaw = habit.stageAdvancementDate || habit.creationDate;
-	const baselineDate = new Date(baselineRaw).toISOString().slice(0, 10);
+	const baselineDate = typeof baselineRaw === 'string' && baselineRaw.includes('T')
+		? new Date(baselineRaw).toISOString().slice(0, 10)
+		: baselineRaw;
 
 	const count = habit.completedDays.filter((day) => {
 		return day.date >= baselineDate && day.progress >= habit.frequency;

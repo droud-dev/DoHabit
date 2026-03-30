@@ -25,6 +25,7 @@ import { FaCalendarTimes } from 'react-icons/fa';
 import { FaRegSnowflake } from 'react-icons/fa';
 import { FaChartSimple } from 'react-icons/fa6';
 import { IoIosArrowForward } from 'react-icons/io'; // next stage
+import { IoIosArrowBack } from 'react-icons/io'; // previous stage
 
 // --- Variants:START ---
 const bgVariants = {
@@ -108,9 +109,20 @@ function HabitMenu(props) {
 		});
 	};
 
+	const handlePreviousStage = () => {
+		habitsDispatch({
+			type: 'regressStage',
+			habitTitle: title,
+		});
+	};
+
 	const showNextStageButton = isProgressive
 		&& progressionMode === 'manual'
 		&& currentStage < stages.length - 1;
+
+	const showPreviousStageButton = isProgressive
+		&& progressionMode === 'manual'
+		&& currentStage > 0;
 
 	const buttons = [
 	...(isFrozen ? [] : [[
@@ -174,6 +186,14 @@ function HabitMenu(props) {
 		null,
 		true
 	],
+	...(showPreviousStageButton ? [[
+		<IoIosArrowBack />,
+		'Previous Stage',
+		darkenedColor,
+		null,
+		null,
+		() => handlePreviousStage()
+	]] : []),
 	...(showNextStageButton ? [[
 		<IoIosArrowForward />,
 		'Next Stage',

@@ -38,7 +38,7 @@ describe('recalculateStageCompletions', () => {
 		expect(result.completionsSinceStageStart).toBe(3);
 	});
 
-	it('should use creationDate as baseline when stageAdvancementDate is null', () => {
+	it('should use earlier of creationDate or earliest completion when stageAdvancementDate is null', () => {
 		const habit = makeHabit({
 			frequency: 1,
 			stageAdvancementDate: null,
@@ -47,12 +47,29 @@ describe('recalculateStageCompletions', () => {
 			completedDays: [
 				{ date: '2025-03-08', progress: 1 },
 				{ date: '2025-03-07', progress: 1 },
-				{ date: '2025-03-04', progress: 1 }, // before creation, should not count
+				{ date: '2025-03-04', progress: 1 }, // retroactive completion before creation, should count
 			],
 		});
 
 		const result = recalculateStageCompletions(habit);
-		expect(result.completionsSinceStageStart).toBe(2);
+		expect(result.completionsSinceStageStart).toBe(3);
+	});
+
+	it('should use creationDate as baseline when no retroactive completions exist', () => {
+		const habit = makeHabit({
+			frequency: 1,
+			stageAdvancementDate: null,
+			currentStage: 0,
+			creationDate: '2025-03-05T00:00:00.000Z',
+			completedDays: [
+				{ date: '2025-03-08', progress: 1 },
+				{ date: '2025-03-07', progress: 1 },
+				{ date: '2025-03-06', progress: 1 },
+			],
+		});
+
+		const result = recalculateStageCompletions(habit);
+		expect(result.completionsSinceStageStart).toBe(3);
 	});
 
 	it('should filter by completion status (progress >= frequency)', () => {
@@ -119,11 +136,11 @@ describe('recalculateStageCompletions', () => {
 			completedDays: [
 				{ date: '2025-03-08', progress: 1 },
 				{ date: '2025-03-06', progress: 1 },
-				{ date: '2025-03-04', progress: 1 }, // before creation
+				{ date: '2025-03-04', progress: 1 }, // retroactive completion, should count
 			],
 		});
 
 		const result = recalculateStageCompletions(habit);
-		expect(result.completionsSinceStageStart).toBe(2);
+		expect(result.completionsSinceStageStart).toBe(3);
 	});
 });
